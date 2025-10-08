@@ -52,6 +52,10 @@ The N8N workflow enables automated, scheduled audits and integrations:
 
 For detailed setup instructions, see [n8n/README.md](n8n/README.md).
 
+### Which Tool Should You Use?
+
+Not sure whether to use Python or N8N? Check out our [comparison guide](COMPARISON.md) to help you decide!
+
 ## 📊 What Gets Analyzed
 
 ### Performance Metrics

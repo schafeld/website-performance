@@ -1,0 +1,414 @@
+{
+  "name": "Web Performance Check",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "={{ $json.websiteUrl }}",
+        "options": {}
+      },
+      "id": "dd1238f9-ceaa-4f4f-93fe-f22eb1ba64c1",
+      "name": "HTTP Request - Get Website",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        448,
+        96
+      ],
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/pagespeedonline/v5/runPagespeed",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "=https://www.compass24.de"
+            },
+            {
+              "name": "strategy",
+              "value": "mobile"
+            },
+            {
+              "name": "category",
+              "value": "performance"
+            },
+            {
+              "name": "category",
+              "value": "accessibility"
+            },
+            {
+              "name": "category",
+              "value": "best-practices"
+            },
+            {
+              "name": "category",
+              "value": "seo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d156070e-3d93-40ec-af6e-9e4f8bb9512c",
+      "name": "PageSpeed Insights API - Mobile",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        672,
+        0
+      ],
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "es4cl05fIQjHtC08",
+          "name": "Query Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/pagespeedonline/v5/runPagespeed",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "=https://www.compass24.de"
+            },
+            {
+              "name": "strategy",
+              "value": "desktop"
+            },
+            {
+              "name": "category",
+              "value": "performance"
+            },
+            {
+              "name": "category",
+              "value": "accessibility"
+            },
+            {
+              "name": "category",
+              "value": "best-practices"
+            },
+            {
+              "name": "category",
+              "value": "seo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "920729ab-dd43-486d-a819-1c7812aa941f",
+      "name": "PageSpeed Insights API - Desktop",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        672,
+        192
+      ],
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "es4cl05fIQjHtC08",
+          "name": "Query Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d9f8ece0-d66e-4385-a693-6d4369f728f3",
+      "name": "Parse Mobile Results",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        896,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "9e78b3f8-8e0c-4810-8c89-4f716b806b47",
+      "name": "Parse Desktop Results",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        896,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "8a27aeab-4955-4fd7-91f0-063ee79941ea",
+      "name": "Merge Mobile and Desktop",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        1120,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "5a9c65bc-1238-496f-959a-0cce1ffa3456",
+      "name": "Format Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        1344,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "7e9ffd6a-2fe1-4581-88b2-2def2acf46f7",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "html": "Report: ",
+        "options": {}
+      },
+      "id": "04bd162c-8982-4c0b-b90c-2924a77281f3",
+      "name": "Generate Report",
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        1792,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.websiteUrl }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "id": "fd25ee2a-088d-44d0-8ed6-c159d0826e92",
+      "name": "Check URL Provided",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        224,
+        96
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "website-performance-audit",
+        "options": {}
+      },
+      "id": "8cc87d08-e863-4d15-9518-6994d0905448",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        96
+      ],
+      "webhookId": "website-performance-audit",
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        352,
+        -112
+      ],
+      "id": "43f6b0d7-8c91-4305-94cf-d6fadc052430",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "content": "Using hard-coded URL string instead of variable\n\n{{ $json.websiteUrl }}"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        544,
+        384
+      ],
+      "typeVersion": 1,
+      "id": "92d3422d-5115-4956-bb18-be39d7a07af4",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {
+          "websiteUrl": "https://www.compass24.de"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check URL Provided",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check URL Provided": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request - Get Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request - Get Website": {
+      "main": [
+        [
+          {
+            "node": "PageSpeed Insights API - Mobile",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "PageSpeed Insights API - Desktop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PageSpeed Insights API - Mobile": {
+      "main": [
+        [
+          {
+            "node": "Parse Mobile Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PageSpeed Insights API - Desktop": {
+      "main": [
+        [
+          {
+            "node": "Parse Desktop Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Mobile Results": {
+      "main": [
+        [
+          {
+            "node": "Merge Mobile and Desktop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Desktop Results": {
+      "main": [
+        [
+          {
+            "node": "Merge Mobile and Desktop",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Mobile and Desktop": {
+      "main": [
+        [
+          {
+            "node": "Format Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Report": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Results": {
+      "main": [
+        [
+          {
+            "node": "Generate Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request - Get Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "79fdfb15-ed7c-4916-b529-38d6006da9bf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4a02d5b56e8e61bd51a4dd9ab074648181f7350389e62ba8facae725266445c7"
+  },
+  "id": "E5V5TqVU1OuPH4nQ",
+  "tags": []
+}

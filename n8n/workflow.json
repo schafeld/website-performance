@@ -1,0 +1,537 @@
+{
+  "name": "Website Performance Analysis and Comparison",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "={{ $json.websiteUrl }}",
+        "options": {}
+      },
+      "id": "1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p",
+      "name": "HTTP Request - Get Website",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/pagespeedonline/v5/runPagespeed",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $json.websiteUrl }}"
+            },
+            {
+              "name": "strategy",
+              "value": "mobile"
+            },
+            {
+              "name": "category",
+              "value": "performance"
+            },
+            {
+              "name": "category",
+              "value": "accessibility"
+            },
+            {
+              "name": "category",
+              "value": "best-practices"
+            },
+            {
+              "name": "category",
+              "value": "seo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q",
+      "name": "PageSpeed Insights API - Mobile",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/pagespeedonline/v5/runPagespeed",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $json.websiteUrl }}"
+            },
+            {
+              "name": "strategy",
+              "value": "desktop"
+            },
+            {
+              "name": "category",
+              "value": "performance"
+            },
+            {
+              "name": "category",
+              "value": "accessibility"
+            },
+            {
+              "name": "category",
+              "value": "best-practices"
+            },
+            {
+              "name": "category",
+              "value": "seo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r",
+      "name": "PageSpeed Insights API - Desktop",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [720, 500]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "url",
+              "value": "={{ $json.lighthouseResult.finalUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "strategy",
+              "value": "={{ $json.lighthouseResult.configSettings.formFactor }}",
+              "type": "string"
+            },
+            {
+              "id": "3",
+              "name": "performanceScore",
+              "value": "={{ Math.round($json.lighthouseResult.categories.performance.score * 100) }}",
+              "type": "number"
+            },
+            {
+              "id": "4",
+              "name": "accessibilityScore",
+              "value": "={{ Math.round($json.lighthouseResult.categories.accessibility.score * 100) }}",
+              "type": "number"
+            },
+            {
+              "id": "5",
+              "name": "bestPracticesScore",
+              "value": "={{ Math.round($json.lighthouseResult.categories['best-practices'].score * 100) }}",
+              "type": "number"
+            },
+            {
+              "id": "6",
+              "name": "seoScore",
+              "value": "={{ Math.round($json.lighthouseResult.categories.seo.score * 100) }}",
+              "type": "number"
+            },
+            {
+              "id": "7",
+              "name": "firstContentfulPaint",
+              "value": "={{ $json.lighthouseResult.audits['first-contentful-paint'].displayValue }}",
+              "type": "string"
+            },
+            {
+              "id": "8",
+              "name": "largestContentfulPaint",
+              "value": "={{ $json.lighthouseResult.audits['largest-contentful-paint'].displayValue }}",
+              "type": "string"
+            },
+            {
+              "id": "9",
+              "name": "totalBlockingTime",
+              "value": "={{ $json.lighthouseResult.audits['total-blocking-time'].displayValue }}",
+              "type": "string"
+            },
+            {
+              "id": "10",
+              "name": "cumulativeLayoutShift",
+              "value": "={{ $json.lighthouseResult.audits['cumulative-layout-shift'].displayValue }}",
+              "type": "string"
+            },
+            {
+              "id": "11",
+              "name": "speedIndex",
+              "value": "={{ $json.lighthouseResult.audits['speed-index'].displayValue }}",
+              "type": "string"
+            },
+            {
+              "id": "12",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s",
+      "name": "Parse Mobile Results",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [940, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "url",
+              "value": "={{ $json.lighthouseResult.finalUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "strategy",
+              "value": "={{ $json.lighthouseResult.configSettings.formFactor }}",
+              "type": "string"
+            },
+            {
+              "id": "3",
+              "name": "performanceScore",
+              "value": "={{ Math.round($json.lighthouseResult.categories.performance.score * 100) }}",
+              "type": "number"
+            },
+            {
+              "id": "4",
+              "name": "accessibilityScore",
+              "value": "={{ Math.round($json.lighthouseResult.categories.accessibility.score * 100) }}",
+              "type": "number"
+            },
+            {
+              "id": "5",
+              "name": "bestPracticesScore",
+              "value": "={{ Math.round($json.lighthouseResult.categories['best-practices'].score * 100) }}",
+              "type": "number"
+            },
+            {
+              "id": "6",
+              "name": "seoScore",
+              "value": "={{ Math.round($json.lighthouseResult.categories.seo.score * 100) }}",
+              "type": "number"
+            },
+            {
+              "id": "7",
+              "name": "firstContentfulPaint",
+              "value": "={{ $json.lighthouseResult.audits['first-contentful-paint'].displayValue }}",
+              "type": "string"
+            },
+            {
+              "id": "8",
+              "name": "largestContentfulPaint",
+              "value": "={{ $json.lighthouseResult.audits['largest-contentful-paint'].displayValue }}",
+              "type": "string"
+            },
+            {
+              "id": "9",
+              "name": "totalBlockingTime",
+              "value": "={{ $json.lighthouseResult.audits['total-blocking-time'].displayValue }}",
+              "type": "string"
+            },
+            {
+              "id": "10",
+              "name": "cumulativeLayoutShift",
+              "value": "={{ $json.lighthouseResult.audits['cumulative-layout-shift'].displayValue }}",
+              "type": "string"
+            },
+            {
+              "id": "11",
+              "name": "speedIndex",
+              "value": "={{ $json.lighthouseResult.audits['speed-index'].displayValue }}",
+              "type": "string"
+            },
+            {
+              "id": "12",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t",
+      "name": "Parse Desktop Results",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [940, 500]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "mergeByPosition",
+        "options": {}
+      },
+      "id": "6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u",
+      "name": "Merge Mobile and Desktop",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [1160, 400]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "websiteUrl",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "mobilePerformance",
+              "value": "={{ $json.performanceScore }}",
+              "type": "number"
+            },
+            {
+              "id": "3",
+              "name": "desktopPerformance",
+              "value": "={{ $json.performanceScore }}",
+              "type": "number"
+            },
+            {
+              "id": "4",
+              "name": "mobileAccessibility",
+              "value": "={{ $json.accessibilityScore }}",
+              "type": "number"
+            },
+            {
+              "id": "5",
+              "name": "desktopAccessibility",
+              "value": "={{ $json.accessibilityScore }}",
+              "type": "number"
+            },
+            {
+              "id": "6",
+              "name": "mobileSEO",
+              "value": "={{ $json.seoScore }}",
+              "type": "number"
+            },
+            {
+              "id": "7",
+              "name": "desktopSEO",
+              "value": "={{ $json.seoScore }}",
+              "type": "number"
+            },
+            {
+              "id": "8",
+              "name": "mobileBestPractices",
+              "value": "={{ $json.bestPracticesScore }}",
+              "type": "number"
+            },
+            {
+              "id": "9",
+              "name": "desktopBestPractices",
+              "value": "={{ $json.bestPracticesScore }}",
+              "type": "number"
+            },
+            {
+              "id": "10",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7g8h9i0j-1k2l-3m4n-5o6p-7q8r9s0t1u2v",
+      "name": "Format Report",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [1380, 400]
+    },
+    {
+      "parameters": {
+        "operation": "aggregateItems",
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "8h9i0j1k-2l3m-4n5o-6p7q-8r9s0t1u2v3w",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [1600, 400]
+    },
+    {
+      "parameters": {
+        "content": "# Website Performance Report\n\n## {{ $json.websiteUrl }}\n\n**Analysis Date:** {{ $json.timestamp }}\n\n---\n\n### Performance Scores\n\n| Category | Mobile | Desktop |\n|----------|--------|--------|\n| Performance | {{ $json.mobilePerformance }}/100 | {{ $json.desktopPerformance }}/100 |\n| Accessibility | {{ $json.mobileAccessibility }}/100 | {{ $json.desktopAccessibility }}/100 |\n| Best Practices | {{ $json.mobileBestPractices }}/100 | {{ $json.desktopBestPractices }}/100 |\n| SEO | {{ $json.mobileSEO }}/100 | {{ $json.desktopSEO }}/100 |\n\n---\n\n### Key Metrics (Mobile)\n\n- **First Contentful Paint:** {{ $('Parse Mobile Results').item.json.firstContentfulPaint }}\n- **Largest Contentful Paint:** {{ $('Parse Mobile Results').item.json.largestContentfulPaint }}\n- **Total Blocking Time:** {{ $('Parse Mobile Results').item.json.totalBlockingTime }}\n- **Cumulative Layout Shift:** {{ $('Parse Mobile Results').item.json.cumulativeLayoutShift }}\n- **Speed Index:** {{ $('Parse Mobile Results').item.json.speedIndex }}\n\n### Key Metrics (Desktop)\n\n- **First Contentful Paint:** {{ $('Parse Desktop Results').item.json.firstContentfulPaint }}\n- **Largest Contentful Paint:** {{ $('Parse Desktop Results').item.json.largestContentfulPaint }}\n- **Total Blocking Time:** {{ $('Parse Desktop Results').item.json.totalBlockingTime }}\n- **Cumulative Layout Shift:** {{ $('Parse Desktop Results').item.json.cumulativeLayoutShift }}\n- **Speed Index:** {{ $('Parse Desktop Results').item.json.speedIndex }}\n\n---\n\n*Report generated by n8n Website Performance Analysis Workflow*\n",
+        "options": {}
+      },
+      "id": "9i0j1k2l-3m4n-5o6p-7q8r-9s0t1u2v3w4x",
+      "name": "Generate Report",
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [1820, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.websiteUrl }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "id": "0j1k2l3m-4n5o-6p7q-8r9s-0t1u2v3w4x5y",
+      "name": "Check URL Provided",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [280, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.websiteUrl }}",
+        "options": {}
+      },
+      "id": "webhook-trigger-node",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [60, 300],
+      "webhookId": "website-performance-audit"
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check URL Provided",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check URL Provided": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request - Get Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request - Get Website": {
+      "main": [
+        [
+          {
+            "node": "PageSpeed Insights API - Mobile",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "PageSpeed Insights API - Desktop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PageSpeed Insights API - Mobile": {
+      "main": [
+        [
+          {
+            "node": "Parse Mobile Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PageSpeed Insights API - Desktop": {
+      "main": [
+        [
+          {
+            "node": "Parse Desktop Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Mobile Results": {
+      "main": [
+        [
+          {
+            "node": "Merge Mobile and Desktop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Desktop Results": {
+      "main": [
+        [
+          {
+            "node": "Merge Mobile and Desktop",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Mobile and Desktop": {
+      "main": [
+        [
+          {
+            "node": "Format Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Report": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Results": {
+      "main": [
+        [
+          {
+            "node": "Generate Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "id": "website-performance-analysis",
+  "meta": {
+    "instanceId": "n8n-instance"
+  },
+  "tags": []
+}
